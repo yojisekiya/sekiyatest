@@ -120,9 +120,6 @@
         $(overlay).addClass('hidden').removeClass('open');
         $('.modal.open').addClass('hidden').removeClass('open');
         $('body').css('overflow', 'auto');
-        // var quantityOld = {{ cart.item_count }};
-        // console.log(quantityOld);
-        // $('#cart-number').replaceWith('<a href="/cart" id="cart-number">View cart(' + quantityOld + ')</a>');
     }
   </script>
   <!-- end added by yoji Aug 23, 2021 -->
@@ -130,20 +127,15 @@
   <!-- added by yoji Aug 30, 2021 -->
   <script>
     $(document).ready(function() {
-      // $("#popup").removeClass("hidden").fadeOut();
       $("#popup").fadeIn();
-      // return false;
     });
     $(function(){
       $("#open").on("click", function() {
         $("#popup").removeClass("hidden").fadeOut();
         $("#popup").fadeIn();
-        // return false;
       });
       $("#close").on("click", function() {
-        // $("#popup").removeClass("show");
         $("#popup").addClass("hidden").fadeOut();
-        // return false;
       });
     });
   </script>
