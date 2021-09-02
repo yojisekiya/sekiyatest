@@ -34,6 +34,14 @@
         {% endfor %}
       </tbody>
     </table>
+    <!-- added by yoji Aug 27, 2021 -->
+    <label for="AddInstructions">Add instructions</label>
+    <input type="checkbox" id="AddInstructions" class="toggle" id="AddInstructions" />
+    <div class="message">
+      <label for="instructions" style="display: none;">Instructions</label>
+      <textarea disabled name="attributes[Instructions]" id="instructions" cols="30" rows="10" placeholder="Write Instructions"></textarea>
+    </div>
+    <!-- end added by yoji Aug 27, 2021 -->    
     <div>
       <p>sub total : {{ cart.total_price | money }}</p>
       <button type="submit" name="update">Update</button>
@@ -44,3 +52,32 @@
   <h2>cart</h2>
   Cart is empty
 {% endif %}
+<!-- added by yoji Aug 28, 2021 -->
+<style>
+.message{ 
+  display: none;
+}
+input.toggle:checked ~ .message{
+  display: block;
+  animation: fadein 1.5s;
+}
+@keyframes fadein{
+  from{ opacity: 0; }
+  to{ opacity: 1; }
+}
+</style>
+<script>
+// enable textarea with #instructions when the checkbox is checked
+$(function(){
+    $('#AddInstructions').click(function(){
+        if($(this).is(":checked")){
+            $('#instructions').prop('disabled', false);
+            $('#instructions').focus();
+        }
+        else {
+            $('#instructions').prop('disabled', true);
+        }
+    });
+});
+</script>
+<!-- end added by yoji Aug 28, 2021 -->
