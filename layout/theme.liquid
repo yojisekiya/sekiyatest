@@ -9,7 +9,146 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
   {{ content_for_header }} <!-- Header hook for plugins -->
   {{ 'application.css' | asset_url | stylesheet_tag }}
+  <!-- added by yoji Aug 23, 2021 -->
+  <!-- <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+  </script> -->
+  {{ '//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js' | script_tag }}
+  <!-- end added by yoji Aug 23, 2021 -->
   {{ 'application.js' | asset_url | script_tag }}
+
+  <script>
+    var cartCount = {{ cart.item_count }};
+    $(document).ready(function() {
+      $('.modal--overlay').on('click', function() {
+        var overlay = $('.modal--overlay');
+        closeModal(overlay);
+      });
+    });
+
+    $(function() {
+      // var quantityOld = {{ cart.item_count }};
+      $('#Quantity').change(function() { 
+        var quantityOld = {{ cart.item_count }};        
+        //選択したvalue値を変数に格納
+        var quantityAdded = $(this).val();
+        var productInventory = {{ current_variant.inventory_quantity }};
+        // console.log(productInventory);
+        $('#cart_index').replaceWith('<input id="cart_index" type="number" name="properties[cart_index]" value="' + quantityAdded + '">');
+
+        {% assign count = 0 %}
+        {% for item in cart.items %}
+          {% if product.id == item.product.id %}
+            {% assign count = count | plus: item.quantity %}
+          {% endif  %}
+        {% endfor %}
+        var quantityOld = {{ count }};
+        var quantityNew = parseInt(quantityOld) + parseInt(quantityAdded);
+        var quantityAdded = $(this).val();
+        // disable button without sufficient stock or nothing is added
+        if(quantityNew > productInventory || quantityAdded < 1){
+          $('#addToCart').prop('disabled', true);
+        } else {
+          $('#addToCart').prop('disabled', false);
+        }
+      });
+    });
+
+    function addItem(form_id) {
+      $.ajax({
+        type: 'POST',
+        url: '/cart/add.js',
+        dataType: 'json',
+        data: $('#' + form_id).serialize(),
+        success: addToCartOk,
+        error: addToCartFail
+      });
+    }
+    function showCart() {
+      $.ajax({
+        type: 'POST',
+        url: '/cart/add.js',
+        dataType: 'json',
+        data: $('#' + form_id)
+            .serialize(),
+        success: addToCartOk,
+        error: addToCartFail
+      });
+    }
+    function addToCartOk(product) {
+      cartCount++;
+      $('.modal').html(product.title + ' was added to the cart!');
+      // var quantityNew = cartCount + quantityNew;
+      // $('#cart-number').replaceWith('<a href="/cart" id="cart-number">View cart(' + quantityNew + ')</a>');
+      openModal();
+    }
+    function addToCartFail(obj, status) {
+      $('.modal').html('The product you are trying to add is out of stock.');
+      openModal();
+    }
+    //Modal Actions
+    //center modal based on window size
+    function centerModal() {
+      var modal = $('.modal.open');
+      var mWidth = modal.outerWidth();
+      var mHeight = modal.outerHeight();
+      var width = $(window)
+          .width();
+      var height = $(window)
+          .height();
+      if ((width % 1) != 0) {
+          width = Math.round(width);
+      }
+      if ((height % 1) != 0) {
+          height = Math.round(height);
+      }
+      var topPos = (height / 2) - (mHeight / 2);
+      var leftPos = (width / 2) - (mWidth / 2);
+      modal.css({top: topPos, left: leftPos});
+    }
+    //open modal and overlay
+    function openModal() {
+        $('.modal').removeClass('hidden').addClass('open');
+        $('.modal--overlay').removeClass('hidden').addClass('open');
+        $('body').css('overflow', 'hidden');
+        centerModal();
+    }
+    //close modal and overlay
+    function closeModal(overlay) {
+        $(overlay).addClass('hidden').removeClass('open');
+        $('.modal.open').addClass('hidden').removeClass('open');
+        $('body').css('overflow', 'auto');
+        // var quantityOld = {{ cart.item_count }};
+        // console.log(quantityOld);
+        // $('#cart-number').replaceWith('<a href="/cart" id="cart-number">View cart(' + quantityOld + ')</a>');
+    }
+  </script>
+  <!-- end added by yoji Aug 23, 2021 -->
+
+  <!-- added by yoji Aug 30, 2021 -->
+  <script>
+    $(document).ready(function() {
+      // $("#popup").removeClass("hidden").fadeOut();
+      $("#popup").fadeIn();
+      // return false;
+    });
+    $(function(){
+      $("#open").on("click", function() {
+        $("#popup").removeClass("hidden").fadeOut();
+        $("#popup").fadeIn();
+        // return false;
+      });
+      $("#close").on("click", function() {
+        // $("#popup").removeClass("show");
+        $("#popup").addClass("hidden").fadeOut();
+        // return false;
+      });
+    });
+  </script>
+  <!-- end added by yoji Aug 30, 2021 -->
+  
 </head>
 <body>
 
@@ -24,8 +163,7 @@
       <a href="{{ link.url }}">{{ link.title }}</a>
     {% endif %}
   {% endfor %}
-
-  <a href="/cart">cart</a>
+  <a id="cart-number" href="/cart">Cart</a>
 
   {% if shop.customer_accounts_enabled %}
     {% if customer %}
