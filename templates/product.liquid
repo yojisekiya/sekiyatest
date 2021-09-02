@@ -1,6 +1,37 @@
 <!-- added by yoji Aug 23, 2021 -->
 <!-- templates/product.liquid -->
 <style>
+  .modal {
+    max-width: 575px;
+    background: white;
+    border: 5px solid #111;
+    padding: 50px 65px;
+    position: fixed;
+    z-index: 1000;
+  }
+  .modal .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  #close{
+    position: absolute;
+    z-index: 10001;
+  }
+  .modal--overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  .hidden{
+    display: none;
+  }
   .line-item-property__field{
     display: none;
   }
@@ -16,7 +47,90 @@
     color: #fff;
   }
 </style>
+<div class="modal hidden" id="download-modal"></div>
+<div class="modal--overlay hidden"></div>
 <!-- end added by yoji Aug 23, 2021 -->
+
+<!-- added by Yoji Aug 30, 2021 -->
+<style>
+  #popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+  .content {
+    background: #fff;
+    padding: 30px;
+    max-width: 800px;
+    max-height: 80vh;
+    display: block;
+    z-index: 1;
+    overflow: auto;
+  }
+  .popup__table{
+    border-collapse: collapse; border:1px solid #000;
+  }
+  th, td{
+    border:1px solid #000;
+    background:#ffffff;
+    padding: 10px;
+    text-align: center;
+  }
+</style>
+<!-- <button id="open">モーダル表示</button> -->
+<div id="popup">
+  <div class="content">
+      <table class="popup__table">
+        <thead>
+          <th>product</th>
+          <th>variant</th>
+          <th>unit_price</th>
+          <th>cart_index</th>
+          <th>line_total</th>
+          <!-- <th>ID</th> -->
+        </thead>
+        <tbody>
+          {% for line_item in cart.items %}
+            <tr>
+              <td>
+                <a href="{{ line_item.url }}">{{ line_item.product.title }}</a>
+              </td>
+              <td>
+                {{ line_item.variant.title }}
+              </td>
+              <td>{{ line_item.price | money }}</td>
+              <td>
+                {% unless line_item.properties == empty %}
+                  {% for property in line_item.properties %}                      
+                    {{ property.last }}
+                  {% endfor %} 
+                {% endunless %}
+              </td>
+              <td>
+                {% if line_item.original_line_price != line_item.line_price %}{{ line_item.original_line_price | money }}{% endif %}
+                {{ line_item.line_price | money }}
+                {% for discount in item.discounts %}{{ discount.title }}{% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>  
+      <div>
+        <p>Sub Total : {{ cart.total_price | money }}</p>
+        <p>Total Items: {{ cart.item_count }} Items</p>
+        <p style="padding-bottom: 30px"><button id="close">close</button>  </p>
+      </div>    
+  </div>
+</div>
+<!-- end added by Yoji Aug 30, 2021 -->
+
 
 {% assign current_variant = product.selected_or_first_available_variant %}
 {% assign featured_image = current_variant.featured_image | default: product.featured_image %}
