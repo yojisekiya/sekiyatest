@@ -1,0 +1,175 @@
+{% if section.blocks != blank %}
+    <div class="news-carousel">
+        <h1 style="text-align: center;">News Carousel</h1>
+        <div class="news-carousel__inner">
+            {% for block in section.blocks %}
+                {% if block.type == "campaign" %}
+                    {% if block.settings.campaign_featured %}                    
+                        <div class="news-carousel__item">
+                            <h2 style="color: red;">{{ block.settings.campaign_title }}</h2>
+                            <p>{{ block.settings.campaign_description }}</p>
+                            <p>This is a featured item.</p>
+                        </div>                        
+                    {% endif %}
+                {% endif %}
+                {% if block.type == "new_product" %}
+                    {% if block.settings.new_product_featured %}                    
+                        <div class="news-carousel__item">
+                            <h2 style="color: blue;">{{ block.settings.new_product_title }}</h2>
+                            <p>{{ block.settings.new_product_description }}</p>
+                            <p>This is a featured item.</p>
+                        </div>                        
+                    {% endif %}
+                {% endif %}
+                {% if block.type == "news" %}
+                    {% if block.settings.news_featured %}                    
+                        <div class="news-carousel__item">
+                            <h2 style="color: green;">{{ block.settings.news_title }}</h2>
+                            <p>{{ block.settings.news_description }}</p>
+                            <p>This is a featured item.</p>
+                        </div>                        
+                    {% endif %}
+                {% endif %}
+            {% endfor %}    
+            {% for block in section.blocks %}
+                {% if block.type == "campaign" %}
+                    {% if block.settings.campaign_featured %}    
+                    {% else %}                                        
+                        <div class="news-carousel__item">
+                            <h2 style="color: red;">{{ block.settings.campaign_title }}</h2>
+                            <p>{{ block.settings.campaign_description }}</p>
+                        </div>                        
+                    {% endif %}
+                {% endif %}
+                {% if block.type == "new_product" %}
+                    {% if block.settings.new_product_featured %}
+                    {% else %}                  
+                        <div class="news-carousel__item">
+                            <h2 style="color: blue;">{{ block.settings.new_product_title }}</h2>
+                            <p>{{ block.settings.new_product_description }}</p>
+                        </div>                        
+                    {% endif %}
+                {% endif %}
+                {% if block.type == "news" %}
+                    {% if block.settings.news_featured %}
+                    {% else %}                
+                        <div class="news-carousel__item">
+                            <h2 style="color: green;">{{ block.settings.news_title }}</h2>
+                            <p>{{ block.settings.news_description }}</p>
+                        </div>                        
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div> 
+{% endif %}
+
+<style>
+    .news-carousel{
+        width: min(90%, 1200px);
+        margin: 50px auto;
+    }
+    .news-carousel__inner{
+        margin: 50px auto;        
+        display: grid;
+        grid-template-columns: 30% 30% 30%;
+        gap: 5%;
+    }
+    .news-carousel__item{
+        background: #eee;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    @media screen and (max-width: 767px) {
+        .news-carousel__inner{
+            grid-template-columns: 47.5% 47.5%;
+            gap: 5%;
+        }
+    }
+    @media screen and (max-width: 480px) {
+        .news-carousel__inner{
+            grid-template-columns: 100%;
+            gap: 2%;
+        }
+    }
+</style>
+
+
+{% schema %}
+    {
+        "name": "News Carousel",
+        "blocks": [
+            {
+                "type": "campaign",
+                "name": "Campaign",
+                "settings": [
+                    {
+                        "type": "text",
+                        "id": "campaign_title",
+                        "label": "Title",
+                        "default": "Title"
+                    },
+                    {
+                        "type": "textarea",
+                        "id": "campaign_description",
+                        "label": "Description"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "campaign_featured",
+                        "label": "Featured"
+                    }
+                ]
+            },
+            {
+                "type": "new_product",
+                "name": "New Product",
+                "settings": [
+                    {
+                        "type": "text",
+                        "id": "new_product_title",
+                        "label": "Title",
+                        "default": "Title"
+                    },
+                    {
+                        "type": "textarea",
+                        "id": "new_product_description",
+                        "label": "Description"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "new_product_featured",
+                        "label": "Featured"
+                    }
+                ]
+            },
+            {
+                "type": "news",
+                "name": "News",
+                "settings": [
+                    {
+                        "type": "text",
+                        "id": "news_title",
+                        "label": "Title",
+                        "default": "Title"
+                    },
+                    {
+                        "type": "textarea",
+                        "id": "news_description",
+                        "label": "Description"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "news_featured",
+                        "label": "Featured"
+                    }
+                ]
+            }
+        ],
+        "presets" : [
+                {
+                    "name" : "News Carousel"
+                }
+            ]
+        }
+{% endschema %}
