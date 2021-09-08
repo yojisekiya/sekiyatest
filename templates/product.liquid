@@ -76,6 +76,8 @@
   }
   .popup__table{
     border-collapse: collapse; border:1px solid #000;
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
   th, td{
     border:1px solid #000;
@@ -87,6 +89,51 @@
 <!-- <button id="open">モーダル表示</button> -->
 <div id="popup">
   <div class="content">
+    <!-- added by yoji Sep 7, 2021 -->
+    <h2>{{ product.title }}</h2>
+    {% assign product_qty = 0 %}
+    {% for variant in product.variants %}
+      {% if variant.inventory_quantity > 0 %}
+        {% assign product_qty = product_qty | plus: variant.inventory_quantity %}
+      {% endif %}
+    {% endfor %}
+    {% if product_qty > 0 %}
+    <h3>Available stock:</h3>
+      <table class="popup__table">
+        <thead>
+          <th>variant</th>
+          <th>stock</th>
+        </thead>
+        <tbody>
+          {% for variant in product.variants %}
+            <tr>
+              <td>
+                {{ variant.title }}
+              </td>
+              <td>
+                {% assign quantity_stock = variant.inventory_quantity %}
+                {% assign quantity_added = 0 %}
+                {% for line_item in cart.items %}
+                  {% if line_item.product.title == product.title and line_item.variant.title == variant.title %}
+                    {% unless line_item.properties == empty %}
+                      {% for property in line_item.properties %}
+                        {% assign quantity_added = property.last %}
+                      {% endfor %} 
+                    {% endunless %}                    
+                  {% endif %}
+                {% endfor %}
+                {{ quantity_stock | minus: quantity_added }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>  
+    {% else %}
+      <p>Stock unavailable</p>
+    {% endif %}
+    <!-- end added by yoji Sep 7,2021 -->
+    {% if cart.item_count > 0 %}
+      <h3>Items in the cart:</h3>
       <table class="popup__table">
         <thead>
           <th>product</th>
@@ -94,7 +141,6 @@
           <th>unit_price</th>
           <th>cart_index</th>
           <th>line_total</th>
-          <!-- <th>ID</th> -->
         </thead>
         <tbody>
           {% for line_item in cart.items %}
@@ -125,8 +171,14 @@
       <div>
         <p>Sub Total : {{ cart.total_price | money }}</p>
         <p>Total Items: {{ cart.item_count }} Items</p>
-        <p style="padding-bottom: 30px"><button id="close">close</button>  </p>
-      </div>    
+        <p style="padding-bottom: 30px; position: relative;"><button id="close">close</button>  </p>
+      </div>  
+    {% else %}
+    <div>
+        <p>No item in the cart.</p>
+        <p style="padding-bottom: 30px; position: relative;"><button id="close">close</button>  </p>
+      </div> 
+    {% endif %}  
   </div>
 </div>
 <!-- end added by Yoji Aug 30, 2021 -->
